@@ -15,7 +15,8 @@ const WORDS = [
   'chocolate',
 ];
 
-const numWrong = 0;
+let numWrong = 0;
+let numRight = 0;
 
 // Loop over the chars in `word` and create divs.
 // The divs should be appended to the section with id="word-container".
@@ -53,6 +54,80 @@ const isLetterInWord = (letter) => {
   return true;
 };
 
+
+const handleCorrectGuess = (letter) => {
+  correctGuesses = document.querySelectorAll(`.${letter}`);
+  for (const guess of correctGuesses) {
+    numRight += 1;
+    guess.innerHTML = letter;
+  }
+  if (numRight == word.length) {
+    const lettersRemaining = document.querySelectorAll('button');
+    for (const remainingLetter of lettersRemaining) {
+      remainingLetter.setAttribute('disabled', 'true');
+    }
+    const playAgain = document.querySelector('#play-again');
+    playAgain.innerHTML = 'You won! Play again?'
+    playAgain.style.display = '';
+  }
+};
+
+
+const handleWrongGuess = () => {
+  numWrong += 1;
+  document.querySelector('img').setAttribute('src', `/static/images/guess${numWrong}.png`);
+  if (numWrong == 5) {
+    const lettersRemaining = document.querySelectorAll('button');
+    for (const remainingLetter of lettersRemaining) {
+      remainingLetter.setAttribute('disabled', 'true');
+    }
+    const playAgain = document.querySelector('#play-again');
+    playAgain.innerHTML = 'The shark got you! Click here to play again.'
+    playAgain.style.display = '';
+  }
+};
+
+const resetGame = () => {
+  numWrong = 0;
+  numRight = 0;
+  const newWordContainer = document.querySelector('#word-container');
+  const newButtons = document.querySelector('#letter-buttons');
+  document.querySelector('img').setAttribute('src', '/static/images/guess0.png');
+  document.querySelector('#play-again').style.display = 'none';
+  while (newWordContainer.firstChild) {
+    newWordContainer.firstChild.remove();
+  }
+
+  while (newButtons.firstChild) {
+    newButtons.firstChild.remove();
+  }
+
+  word = WORDS[Math.floor(Math.random()*WORDS.length)];
+  createDivsForChars(word);
+  generateLetterButtons();
+
+  for (const button of document.querySelectorAll('button')) {
+    // add an event handler to handle clicking on a letter button
+    button.addEventListener('click', (evt) => {
+      pressedButton = evt.target;
+      disableLetterButton(pressedButton);
+
+      if(isLetterInWord(pressedButton.innerHTML)) {
+        handleCorrectGuess(pressedButton.innerHTML);
+      }
+
+      else {
+        handleWrongGuess();
+      }
+    
+    })
+  }
+
+  // add an event handler to handle clicking on the Play Again button
+  const reset = document.querySelector('#play-again');
+  reset.addEventListener('click', resetGame);
+}
+
 // This is like if __name__ == '__main__' in Python
 // It will be called when the file is run (because
 // we call the function on line 66)
@@ -69,6 +144,24 @@ const isLetterInWord = (letter) => {
   // call the function that makes a button for each letter in the alphabet
   generateLetterButtons();
 
-  // in the next lab, you will be adding functionality to handle when
-  // someone clicks on a letter
+  for (const button of document.querySelectorAll('button')) {
+    // add an event handler to handle clicking on a letter button
+    button.addEventListener('click', (evt) => {
+      pressedButton = evt.target;
+      disableLetterButton(pressedButton);
+
+      if(isLetterInWord(pressedButton.innerHTML)) {
+        handleCorrectGuess(pressedButton.innerHTML);
+      }
+
+      else {
+        handleWrongGuess();
+      }
+    
+    })
+  }
+
+  // add an event handler to handle clicking on the Play Again button
+  const reset = document.querySelector('#play-again');
+  reset.addEventListener('click', resetGame);
 })();
