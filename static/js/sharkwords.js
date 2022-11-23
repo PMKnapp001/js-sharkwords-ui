@@ -61,15 +61,7 @@ const handleCorrectGuess = (letter) => {
     numRight += 1;
     guess.innerHTML = letter;
   }
-  if (numRight == word.length) {
-    const lettersRemaining = document.querySelectorAll('button');
-    for (const remainingLetter of lettersRemaining) {
-      remainingLetter.setAttribute('disabled', 'true');
-    }
-    const playAgain = document.querySelector('#play-again');
-    playAgain.innerHTML = 'You won! Play again?'
-    playAgain.style.display = '';
-  }
+  
 };
 
 
@@ -137,7 +129,7 @@ const resetGame = () => {
   // finish this lab but we hard code it so we know what the word is
   // and can tell if things look correct for this word
   const word = WORDS[Math.floor(Math.random()*WORDS.length)]; //Referred to https://www.w3schools.com/js/js_random.asp for random int help
-
+  console.log(word);
   // call the function that makes an empty line for each letter in the word
   createDivsForChars(word);
 
@@ -152,6 +144,16 @@ const resetGame = () => {
 
       if(isLetterInWord(pressedButton.innerHTML)) {
         handleCorrectGuess(pressedButton.innerHTML);
+
+        if (numRight == word.length) {
+          const lettersRemaining = document.querySelectorAll('button');
+          for (const remainingLetter of lettersRemaining) {
+            remainingLetter.setAttribute('disabled', 'true');
+          }
+          const playAgain = document.querySelector('#play-again');
+          playAgain.innerHTML = 'You won! Play again?'
+          playAgain.style.display = '';
+        }
       }
 
       else {
